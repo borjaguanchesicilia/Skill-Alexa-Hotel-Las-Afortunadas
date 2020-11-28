@@ -1,0 +1,284 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "servicio de habitaciones",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "CheckIN",
+                    "slots": [
+                        {
+                            "name": "dia",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "el día {dia}",
+                                "{dia}",
+                                "el {dia}"
+                            ]
+                        },
+                        {
+                            "name": "mes",
+                            "type": "TipoMes",
+                            "samples": [
+                                "{mes}",
+                                "en {mes}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "entré el {dia}",
+                        "mi entrada al hotel fue el {dia}",
+                        "el {dia}",
+                        "{dia}",
+                        "{dia} del {mes}",
+                        "he llegado el {dia}",
+                        "mi llegada fue el {dia} de {mes}",
+                        "llegué el {dia} de {mes} ",
+                        "{mes} {dia}",
+                        "{dia} de {mes}",
+                        "en {mes}"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "HorarioBufet",
+                    "slots": [],
+                    "samples": [
+                        "Dime los horarios del bufet",
+                        "Dime los horarios de las comidas",
+                        "Cuándo puedo comer",
+                        "Cuándo puedo cenar",
+                        "Cuándo puedo almorzar",
+                        "Cuándo puedo desayunar",
+                        "A qué hora es la cena",
+                        "A qué hora es el almuerzo",
+                        "A qué hora es el desayuno"
+                    ]
+                },
+                {
+                    "name": "HorarioPiscina",
+                    "slots": [],
+                    "samples": [
+                        "Habáme de la piscina",
+                        "piscina",
+                        "Horarios piscina",
+                        "Cuándo puedo ir a la piscina",
+                        "Qué horarios hay en la piscina"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "TipoMes",
+                    "values": [
+                        {
+                            "id": "12",
+                            "name": {
+                                "value": "diciembre"
+                            }
+                        },
+                        {
+                            "id": "11",
+                            "name": {
+                                "value": "noviembre"
+                            }
+                        },
+                        {
+                            "id": "10",
+                            "name": {
+                                "value": "octubre"
+                            }
+                        },
+                        {
+                            "id": "09",
+                            "name": {
+                                "value": "septiembre"
+                            }
+                        },
+                        {
+                            "id": "08",
+                            "name": {
+                                "value": "agosto"
+                            }
+                        },
+                        {
+                            "id": "07",
+                            "name": {
+                                "value": "julio"
+                            }
+                        },
+                        {
+                            "id": "06",
+                            "name": {
+                                "value": "junio"
+                            }
+                        },
+                        {
+                            "id": "05",
+                            "name": {
+                                "value": "mayo"
+                            }
+                        },
+                        {
+                            "id": "04",
+                            "name": {
+                                "value": "abril"
+                            }
+                        },
+                        {
+                            "id": "03",
+                            "name": {
+                                "value": "marzo"
+                            }
+                        },
+                        {
+                            "id": "02",
+                            "name": {
+                                "value": "febrero"
+                            }
+                        },
+                        {
+                            "id": "01",
+                            "name": {
+                                "value": "enero"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "CheckIN",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "dia",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.653974572406.1040382425372"
+                            },
+                            "validations": [
+                                {
+                                    "type": "isLessThanOrEqualTo",
+                                    "prompt": "Slot.Validation.1448999759122.1187992845315.1277360034430",
+                                    "value": "31"
+                                },
+                                {
+                                    "type": "isGreaterThanOrEqualTo",
+                                    "prompt": "Slot.Validation.1448999759122.1187992845315.280961763249",
+                                    "value": "1"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "mes",
+                            "type": "TipoMes",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.282358190483.487594834711"
+                            },
+                            "validations": [
+                                {
+                                    "type": "hasEntityResolutionMatch",
+                                    "prompt": "Slot.Validation.1448999759122.646810872954.980502410410"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.653974572406.1040382425372",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "vale, ha llegado en {mes} , pero que día?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "que día?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "en que día?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "dime en que día del mes es"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.282358190483.487594834711",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "dime ahora el mes"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "en que mes es?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "vale, el día {dia} , pero en que mes?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "en que mes?"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1448999759122.1187992845315.1277360034430",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Por favor, dígame un día menor o igual que treinta y uno."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1448999759122.1187992845315.280961763249",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Por favor, dígame un día mayor o igual que uno."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1448999759122.646810872954.980502410410",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Por favor dígame un mes válido."
+                    }
+                ]
+            }
+        ]
+    }
+}

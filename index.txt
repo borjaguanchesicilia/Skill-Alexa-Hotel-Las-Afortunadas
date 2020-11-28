@@ -1,0 +1,265 @@
+const Alexa = require('ask-sdk-core');
+const persistencia = require('./persistencia');
+const interceptores = require('./interceptores');
+const GIVEN_NAME_PERMISSION = ['alexa::profile:given_name:read'];
+
+
+const LaunchRequestHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
+    },
+     async handle(handlerInput) {
+        
+        const {attributesManager, serviceClientFactory, requestEnvelope} = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
+        const sessionAttributes = attributesManager.getSessionAttributes();
+        
+        const dia = sessionAttributes['dia'];
+        const mes = sessionAttributes['mes'];
+        
+        if(!sessionAttributes['name']){
+            try {
+                const {permissions} = requestEnvelope.context.System.user;
+                if(!permissions)
+                    throw { statusCode: 401, message: 'No permissions available' }; // there are zero permissions, no point in intializing the API
+                const upsServiceClient = serviceClientFactory.getUpsServiceClient();
+                const profileName = await upsServiceClient.getProfileGivenName();
+                if (profileName) { sessionAttributes['name'] = profileName;}
+
+            } catch (error) {
+                console.log(JSON.stringify(error));
+                if (error.statusCode === 401 || error.statusCode === 403) {
+                  handlerInput.responseBuilder.withAskForPermissionsConsentCard(GIVEN_NAME_PERMISSION);
+                }
+            }
+        }
+
+        const name = sessionAttributes['name'] ? sessionAttributes['name'] : '';
+        
+        const bienvenida = requestAttributes.t('BIENVENIDA', name);
+        let mensaje = requestAttributes.t('CHECKIN');
+        
+        if(dia && mes){
+            mensaje = requestAttributes.t('FECHAREGISTRO', dia, mes)
+        }
+        
+        return handlerInput.responseBuilder
+            .speak(bienvenida + mensaje)
+            .reprompt(mensaje)
+            .getResponse();
+    }
+};
+
+
+const CheckINHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'CheckIN';
+    },
+    handle(handlerInput) {
+        const {attributesManager} = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
+        const sessionAttributes = attributesManager.getSessionAttributes();
+        const {intent} = handlerInput.requestEnvelope.request;
+    
+        const dia = intent.slots.dia.value;
+        const mes = intent.slots.mes.resolutions.resolutionsPerAuthority[0].values[0].value.name;
+        const mes_id = intent.slots.mes.resolutions.resolutionsPerAuthority[0].values[0].value.id;
+        
+        sessionAttributes['dia'] = dia;
+        sessionAttributes['mes'] = mes;
+        sessionAttributes['mes_id'] = mes_id;
+        
+        const name = sessionAttributes['name'] ? sessionAttributes['name'] : '';
+
+        return handlerInput.responseBuilder
+            .speak(requestAttributes.t('FECHAREGISTRO', dia, mes))
+            .reprompt(requestAttributes.t('AYUDA'))
+            .getResponse();
+    }
+};
+
+
+const HorarioBufetHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'HorarioBufet';
+    },
+    handle(handlerInput) {
+        
+        const {attributesManager} = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
+        
+        const desayuno = requestAttributes.t('HORARIODESAYUNO');
+        const alumuerzo = requestAttributes.t('HORARIOALMUERZO');
+        const cena = requestAttributes.t('HORARIOCENA');
+        const horarioBufet = (desayuno + alumuerzo + cena);
+        
+        return handlerInput.responseBuilder
+            .speak(horarioBufet + ' ...Quiere una recomendación?')
+            .reprompt(requestAttributes.t('BARPISCINA'))
+            .getResponse();
+    }
+};
+
+
+const HorarioPiscinaHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'HorarioPiscina';
+    },
+    handle(handlerInput) {
+        
+        const {attributesManager} = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
+        
+        const turno1 = requestAttributes.t('HORARIOMAÑANA');
+        const turno2 = requestAttributes.t('HORARIOTARDE1');
+        const turno3 = requestAttributes.t('HORARIOTARDE2');
+        const horarioPiscina = (turno1 + turno2 + turno3);
+        
+        let recomendación = recomendacionAleatoria(Actividades);
+        
+        return handlerInput.responseBuilder
+            .speak(horarioPiscina + ' ...Quiere una recomendación?')
+            .reprompt(recomendacionAleatoria(Actividades))
+            .getResponse();
+    }
+};
+
+
+const HelpIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.HelpIntent';
+    },
+    handle(handlerInput) {
+        const {attributesManager} = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
+        const speechText = requestAttributes.t('AYUDA');
+
+        return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt(speechText)
+            .getResponse();
+    }
+};
+
+
+const CancelAndStopIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+            && (handlerInput.requestEnvelope.request.intent.name === 'AMAZON.CancelIntent'
+                || handlerInput.requestEnvelope.request.intent.name === 'AMAZON.StopIntent');
+    },
+    handle(handlerInput) {
+        const {attributesManager} = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
+        const speechText = requestAttributes.t('DESPEDIDA');
+
+        return handlerInput.responseBuilder
+            .speak(speechText)
+            .getResponse();
+    }
+};
+
+
+const FallbackIntentHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'AMAZON.FallbackIntent';
+    },
+    handle(handlerInput) {
+        const {attributesManager} = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
+        const speechText = requestAttributes.t('FALLBACK_MSG');
+
+        return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt(speechText)
+            .getResponse();
+    }
+};
+
+const SessionEndedRequestHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'SessionEndedRequest';
+    },
+    handle(handlerInput) {
+        return handlerInput.responseBuilder.getResponse();
+    }
+};
+
+
+const IntentReflectorHandler = {
+    canHandle(handlerInput) {
+        return handlerInput.requestEnvelope.request.type === 'IntentRequest';
+    },
+    handle(handlerInput) {
+        const {attributesManager} = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
+        const intentName = handlerInput.requestEnvelope.request.intent.name;
+        const speechText = requestAttributes.t('REFLECTOR_MSG', intentName);
+
+        return handlerInput.responseBuilder
+            .speak(speechText)
+            .getResponse();
+    }
+};
+
+
+const ErrorHandler = {
+    canHandle() {
+        return true;
+    },
+    handle(handlerInput, error) {
+        const {attributesManager} = handlerInput;
+        const requestAttributes = attributesManager.getRequestAttributes();
+        const speechText = requestAttributes.t('ERROR');
+
+        console.log(`~~~~ Error handled: ${error.message}`);
+
+        return handlerInput.responseBuilder
+            .speak(speechText)
+            .reprompt(speechText)
+            .getResponse();
+    }
+};
+
+
+function recomendacionAleatoria(Actividades) {
+    return Actividades[Math.floor(Math.random()*Actividades.length)]
+}
+
+
+const Actividades = [
+  'Visite el Parque Nacional del Teide, nuestra joya. Para más información visite www.volcanoteide.com ', 
+  'Dé un paseo en velero con avistamiento de cetáceos. Para más información diríjase a Puerto Colón o al puerto de los Gigantes.',
+  'A montado alguna vez en moto de agua? Haga un tour en moto de agua por el sur de Tenerife. Para más información diríjase a Puerto Colón.',
+  'Quiere hacer un tour en kayak? Disfrute de la isla baja y haga un tour en kayac por la Punta de Teno. Para más información contácte con Teno activo.',
+  'Un día diferente? Disfrute de un día de adrenalina en Siam Park o de un día entre animales en Loro Parque. ',
+  'Aquí, en Tenerife, tenemos numeros barrancos por los que se puede investicar, recorrery disfrutar, te invito a que haga un tour de los misterios y leyendas del por Barranco de Badajoz (en Güímar) o por el Barranco de Erques (en Fasnia). ',
+  'Un buen plan nucturno es una excursión nocturna por las Cañadas del Teide. Para más información visite www.volcanoteide.com'
+];
+
+
+exports.handler = Alexa.SkillBuilders.custom()
+    .addRequestHandlers(
+        LaunchRequestHandler,
+        CheckINHandler,
+        HorarioPiscinaHandler,
+        HorarioBufetHandler,
+        HelpIntentHandler,
+        CancelAndStopIntentHandler,
+        SessionEndedRequestHandler,
+        IntentReflectorHandler)
+        .addRequestInterceptors(
+            interceptores.LocalizationRequestInterceptor,
+            interceptores.LoggingRequestInterceptor,
+            interceptores.LoadAttributesRequestInterceptor)
+        .addResponseInterceptors(
+            interceptores.LoggingResponseInterceptor,
+            interceptores.SaveAttributesResponseInterceptor)
+        .withPersistenceAdapter(persistencia.getPersistenceAdapter())
+        .withApiClient(new Alexa.DefaultApiClient())
+        .lambda();
