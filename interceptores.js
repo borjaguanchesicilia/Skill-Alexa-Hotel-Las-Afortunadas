@@ -35,7 +35,7 @@ module.exports = {
 
     LoadAttributesRequestInterceptor: {
         async process(handlerInput) {
-            if(handlerInput.requestEnvelope.session['new']){ //is this a new session?
+            if(handlerInput.requestEnvelope.session['new']){
                 const {attributesManager} = handlerInput;
                 const persistentAttributes = await attributesManager.getPersistentAttributes() || {};
                 handlerInput.attributesManager.setSessionAttributes(persistentAttributes);
@@ -49,7 +49,7 @@ module.exports = {
             const {attributesManager} = handlerInput;
             const sessionAttributes = attributesManager.getSessionAttributes();
             const shouldEndSession = (typeof response.shouldEndSession === "undefined" ? true : response.shouldEndSession);
-            if(shouldEndSession || handlerInput.requestEnvelope.request.type === 'SessionEndedRequest') {            
+            if(shouldEndSession || handlerInput.requestEnvelope.request.type === 'SessionEndedRequest') {
                 attributesManager.setPersistentAttributes(sessionAttributes);
                 await attributesManager.savePersistentAttributes();
             }

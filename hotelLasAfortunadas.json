@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "servicio de habitaciones",
+            "invocationName": "room service",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
@@ -16,38 +16,39 @@
                     "samples": []
                 },
                 {
-                    "name": "CheckIN",
+                    "name": "CheckINEn",
                     "slots": [
                         {
-                            "name": "dia",
+                            "name": "day",
                             "type": "AMAZON.NUMBER",
                             "samples": [
-                                "el día {dia}",
-                                "{dia}",
-                                "el {dia}"
+                                "on day {day}",
+                                "{day}",
+                                "on {day}"
                             ]
                         },
                         {
-                            "name": "mes",
-                            "type": "TipoMes",
+                            "name": "month",
+                            "type": "monthName",
                             "samples": [
-                                "{mes}",
-                                "en {mes}"
+                                "of {month}",
+                                "{month}",
+                                "on {month}"
                             ]
                         }
                     ],
                     "samples": [
-                        "entré el {dia}",
-                        "mi entrada al hotel fue el {dia}",
-                        "el {dia}",
-                        "{dia}",
-                        "{dia} del {mes}",
-                        "he llegado el {dia}",
-                        "mi llegada fue el {dia} de {mes}",
-                        "llegué el {dia} de {mes} ",
-                        "{mes} {dia}",
-                        "{dia} de {mes}",
-                        "en {mes}"
+                        "check in on {day}",
+                        "my check in was on {day}",
+                        "on {day}",
+                        "{day}",
+                        "{day} of {month}",
+                        "I was arrive on {day}",
+                        "my arrive was on {day} of {month}",
+                        "I have arrived on {day} of {month} ",
+                        "{month} {day}",
+                        "{day} of {month}",
+                        "on {month}"
                     ]
                 },
                 {
@@ -58,103 +59,126 @@
                     "name": "HorarioBufet",
                     "slots": [],
                     "samples": [
-                        "Dime los horarios del bufet",
-                        "Dime los horarios de las comidas",
-                        "Cuándo puedo comer",
-                        "Cuándo puedo cenar",
-                        "Cuándo puedo almorzar",
-                        "Cuándo puedo desayunar",
-                        "A qué hora es la cena",
-                        "A qué hora es el almuerzo",
-                        "A qué hora es el desayuno"
+                        "time to lunch",
+                        "time to breakfast",
+                        "time to dinner",
+                        "breakfast",
+                        "lunch",
+                        "dinner",
+                        "Tell me the buffet hours",
+                        "Tell me the food hours",
+                        "when can I eat",
+                        "when can I have dinner",
+                        "when can I have lucnh",
+                        "when can I have breakfast",
+                        "what time is the breakfast",
+                        "what time is the lunch",
+                        "what time is the dinner"
                     ]
                 },
                 {
                     "name": "HorarioPiscina",
                     "slots": [],
                     "samples": [
-                        "Habáme de la piscina",
-                        "piscina",
-                        "Horarios piscina",
-                        "Cuándo puedo ir a la piscina",
-                        "Qué horarios hay en la piscina"
+                        "Tell me about the pool",
+                        "pool",
+                        "Pool hours",
+                        "Pool timetable",
+                        "When can I do to the pool",
+                        "What hours are there on the pool"
+                    ]
+                },
+                {
+                    "name": "Recommendations",
+                    "slots": [],
+                    "samples": [
+                        "other recommendation",
+                        "other please",
+                        "other",
+                        "Recommend me activities",
+                        "Tell me activities",
+                        "activities",
+                        "Recommend me",
+                        "What can I do",
+                        "Tell me something that I can do",
+                        "Recommend me something"
                     ]
                 }
             ],
             "types": [
                 {
-                    "name": "TipoMes",
+                    "name": "monthName",
                     "values": [
                         {
                             "id": "12",
                             "name": {
-                                "value": "diciembre"
+                                "value": "december"
                             }
                         },
                         {
                             "id": "11",
                             "name": {
-                                "value": "noviembre"
+                                "value": "november"
                             }
                         },
                         {
                             "id": "10",
                             "name": {
-                                "value": "octubre"
+                                "value": "october"
                             }
                         },
                         {
                             "id": "09",
                             "name": {
-                                "value": "septiembre"
+                                "value": "september"
                             }
                         },
                         {
                             "id": "08",
                             "name": {
-                                "value": "agosto"
+                                "value": "august"
                             }
                         },
                         {
                             "id": "07",
                             "name": {
-                                "value": "julio"
+                                "value": "july"
                             }
                         },
                         {
                             "id": "06",
                             "name": {
-                                "value": "junio"
+                                "value": "june"
                             }
                         },
                         {
                             "id": "05",
                             "name": {
-                                "value": "mayo"
+                                "value": "may"
                             }
                         },
                         {
                             "id": "04",
                             "name": {
-                                "value": "abril"
+                                "value": "april"
                             }
                         },
                         {
                             "id": "03",
                             "name": {
-                                "value": "marzo"
+                                "value": "march"
                             }
                         },
                         {
                             "id": "02",
                             "name": {
-                                "value": "febrero"
+                                "value": "february"
                             }
                         },
                         {
                             "id": "01",
                             "name": {
-                                "value": "enero"
+                                "value": "january"
                             }
                         }
                     ]
@@ -164,12 +188,12 @@
         "dialog": {
             "intents": [
                 {
-                    "name": "CheckIN",
+                    "name": "CheckINEn",
                     "confirmationRequired": false,
                     "prompts": {},
                     "slots": [
                         {
-                            "name": "dia",
+                            "name": "day",
                             "type": "AMAZON.NUMBER",
                             "confirmationRequired": false,
                             "elicitationRequired": true,
@@ -190,8 +214,8 @@
                             ]
                         },
                         {
-                            "name": "mes",
-                            "type": "TipoMes",
+                            "name": "month",
+                            "type": "monthName",
                             "confirmationRequired": false,
                             "elicitationRequired": true,
                             "prompts": {
@@ -215,19 +239,19 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "vale, ha llegado en {mes} , pero que día?"
+                        "value": "ok, you arrived on {month}, but on day"
                     },
                     {
                         "type": "PlainText",
-                        "value": "que día?"
+                        "value": "what day"
                     },
                     {
                         "type": "PlainText",
-                        "value": "en que día?"
+                        "value": "on day"
                     },
                     {
                         "type": "PlainText",
-                        "value": "dime en que día del mes es"
+                        "value": "tell me on what day please."
                     }
                 ]
             },
@@ -236,19 +260,15 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "dime ahora el mes"
+                        "value": "now, tell on what month plase."
                     },
                     {
                         "type": "PlainText",
-                        "value": "en que mes es?"
+                        "value": "what month was it"
                     },
                     {
                         "type": "PlainText",
-                        "value": "vale, el día {dia} , pero en que mes?"
-                    },
-                    {
-                        "type": "PlainText",
-                        "value": "en que mes?"
+                        "value": "ok, you arrived on {day}, but on what month?"
                     }
                 ]
             },
@@ -257,7 +277,7 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "Por favor, dígame un día menor o igual que treinta y uno."
+                        "value": "Please tell me a day less or equal than thirty-one"
                     }
                 ]
             },
@@ -266,7 +286,7 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "Por favor, dígame un día mayor o igual que uno."
+                        "value": "Please tell me a day greater or equal than one"
                     }
                 ]
             },
@@ -275,7 +295,7 @@
                 "variations": [
                     {
                         "type": "PlainText",
-                        "value": "Por favor dígame un mes válido."
+                        "value": "Please tell me a true month"
                     }
                 ]
             }
